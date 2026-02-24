@@ -1,0 +1,69 @@
+# Formula: mol-refinery-patrol
+# Type: patrol
+# Refinery merge queue patrol cycle
+
+description = """Refinery patrol cycle - process merge queue for myproject.
+
+Sequential rebase protocol: checkout branch, rebase on main, run tests, merge, push."""
+formula = "mol-refinery-patrol"
+version = 1
+
+[[steps]]
+id = "inbox-check"
+title = "Inbox Check"
+description = "Handle messages, escalations, and MERGE_READY signals."
+
+[[steps]]
+id = "queue-scan"
+title = "Queue Scan"
+description = "Identify polecat branches waiting in merge queue. Run: git fetch --prune origin && gt mq list myproject"
+
+[[steps]]
+id = "process-branch"
+title = "Process Branch"
+description = "Pick next branch from queue, rebase on current main."
+
+[[steps]]
+id = "run-tests"
+title = "Run Tests"
+description = "Run quality checks and test suite: setup, typecheck, lint, build, test."
+
+[[steps]]
+id = "handle-failures"
+title = "Handle Failures"
+description = "VERIFICATION GATE. Tests passed -> merge. Tests failed by branch -> reject. Pre-existing -> file bead."
+
+[[steps]]
+id = "merge-push"
+title = "Merge and Push"
+description = "Merge to main (ff-only) and push. Then clean up temp and polecat branches."
+
+[[steps]]
+id = "loop-check"
+title = "Loop Check"
+description = "More branches in queue? Return to process-branch."
+
+[[steps]]
+id = "generate-summary"
+title = "Generate Summary"
+description = "Summarize this patrol cycle."
+
+[[steps]]
+id = "check-integration-branches"
+title = "Check Integration Branches"
+description = "Check if integration branches are ready to land. Only use gt mq integration land."
+
+[[steps]]
+id = "context-check"
+title = "Context Check"
+description = "Assess session health - RSS, session age, context usage."
+
+[[steps]]
+id = "patrol-cleanup"
+title = "Patrol Cleanup"
+description = "Archive stale messages, check for orphaned MR beads."
+
+[[steps]]
+id = "burn-or-loop"
+title = "Burn or Loop"
+description = "Decision point - continue patrolling or handoff."
